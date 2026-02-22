@@ -9,9 +9,7 @@
 
 namespace DemoWebCSharp
 {
-
-
-    public partial class CollectionTask
+   public partial class CollectionTask
     {
 
         /// <summary>

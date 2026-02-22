@@ -20,10 +20,7 @@ namespace DemoWebCSharp
 
             }
         }
-
-
-        
-            public void ShowAllConcept()
+        public void ShowAllConcept()
             {
             string output = "";
 

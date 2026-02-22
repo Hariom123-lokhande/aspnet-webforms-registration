@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="DemoWebCSharp/DemoWebCSharp.csproj" Id="b77f73cf-fabf-409b-a114-09e11ff7a854" />
+  <Project Path="ExceptionConsole/ExceptionConsole.csproj" Id="fd57ee96-23a9-438e-8651-6b1da23931e4" />
 </Solution>
