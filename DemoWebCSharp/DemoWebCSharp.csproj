@@ -119,6 +119,11 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
+    <Content Include="db.schema\dbo.sp_DeleteUser.StoredProcedure.sql" />
+    <Content Include="db.schema\dbo.sp_GetUsers.StoredProcedure.sql" />
+    <Content Include="db.schema\dbo.sp_InsertUser.StoredProcedure.sql" />
+    <Content Include="db.schema\dbo.sp_UpdateUser.StoredProcedure.sql" />
+    <Content Include="db.schema\script.sql" />
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />

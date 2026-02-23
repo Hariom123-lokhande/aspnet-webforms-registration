@@ -16,7 +16,7 @@ namespace DemoWebCSharp
             if (!IsPostBack)
             {
                 //GetData();
-                ShowAllConcept();
+                //ShowAllConcept();
 
             }
         }
