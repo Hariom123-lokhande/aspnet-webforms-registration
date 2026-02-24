@@ -1,8 +1,11 @@
-﻿using System;
+﻿using DemoWebCSharp.Utility;
+using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Drawing.Printing;
 using System.Web.Services.Description;
 using System.Web.UI.WebControls;
-using DemoWebCSharp.Utility;
 
 namespace DemoWebCSharp
 {
@@ -15,8 +18,19 @@ namespace DemoWebCSharp
 
             if (!IsPostBack)
             {
-                //GetData();
+               GetData();
                 //ShowAllConcept();
+                if (Session["UserId"] !=null)
+                {
+                    btnSubmit.Text = "Update";
+                    int userId = Convert.ToInt32(Session["UserId"]);
+                    LoadUserData(userId);
+
+                }
+                else
+                {
+                    btnSubmit.Text = "View";
+                }
 
             }
         }
@@ -60,33 +74,100 @@ namespace DemoWebCSharp
 
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
-            if (Page.IsValid)
+            if (!Page.IsValid)
+                return;
+
+            string firstName = txtFirstName.Text;
+            string Fullname = txtLastName.Text;
+            string lastName = txtLastName.Text;
+            string email = txtEmail.Text;
+            bool isVaccinated = (rblVaccinated.SelectedValue == "Yes");
+
+            DateTime dob;
+            if (!DateTime.TryParse(txtDOB.Text, out dob))
             {
-                string firstName = txtFirstName.Text;
-                string lastName = txtLastName.Text;
-                string email = txtEmail.Text;
-                bool isVaccinated = (rblVaccinated.SelectedValue == "Yes");
+                lblMessage.Text = "<span class='text-danger'>Invalid Date of Birth.</span>";
+                return;
+            }
 
-                DateTime dob;
-                if (!DateTime.TryParse(txtDOB.Text, out dob))
+            int age = service.CalculateAge(dob);
+
+            if (age < 18)
+            {
+                lblMessage.Text = "<span class='text-danger'>Age must be 18+</span>";
+                return;
+            }
+
+            string gender = rbMale.Checked ? "Male" : "Female";
+
+            string cs = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                SqlCommand cmd;
+
+                if (Session["UserId"] == null)
                 {
-                    lblMessage.Text = "<span class='text-danger'>Invalid Date of Birth.</span>";
-                    return;
-                }
-                int age = service.CalculateAge(dob);
+                    // 🔹 INSERT MODE
+                    cmd = new SqlCommand("sp_InsertUser", con);
+                    lblMessage.Text = "user Register succefully";
 
-                if (age < 18)
+                }
+                else
                 {
-                    lblMessage.Text = "<span class='text-danger'>Registration Failed! Age must be 18+</span>";
-                    return;
+                    // 🔹 UPDATE MODE
+                    cmd = new SqlCommand("sp_UpdateUser", con);
+                    cmd.Parameters.AddWithValue("@Id", Convert.ToInt32(Session["UserId"]));
+                    lblMessage.Text = "user updated succefully";
                 }
-                string gender = rbMale.Checked ? "Male" : "Female";
 
-                string result = service.GenerateSummary(firstName, lastName,
-                                                        email, gender,
-                                                        age, isVaccinated);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                lblMessage.Text = result;
+                cmd.Parameters.AddWithValue("@Name",firstName );
+               // cmd.Parameters.AddWithValue("@LastName", lastName);
+                cmd.Parameters.AddWithValue("@Email", email);
+                //cmd.Parameters.AddWithValue("@Gender", gender);
+                //cmd.Parameters.AddWithValue("@DOB", dob);
+                //cmd.Parameters.AddWithValue("@IsVaccinated", isVaccinated);
+                cmd.Parameters.AddWithValue("@CreatedBy", "Admin");
+                cmd.Parameters.AddWithValue("@Password", txtPassword.Text);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+
+            // Session clear karo after update
+            Session.Remove("UserId");
+            
+
+            // Redirect back to list
+            Response.Redirect("UserList.aspx");
+        }
+
+        private void LoadUserData(int id)
+        {
+            string cs = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
+
+            using (SqlConnection con = new SqlConnection(cs))
+            {
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT Name, Email, Password FROM UserRegistration WHERE Id=@Id",
+                    con);
+
+                cmd.Parameters.AddWithValue("@Id", id);
+
+                con.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (dr.Read())
+                {
+                    txtFirstName.Text = dr["Name"].ToString();
+                    txtEmail.Text = dr["Email"].ToString();
+                    txtPassword.Text = dr["Password"].ToString();
+                }
+
+                con.Close();
             }
         }
         protected void ValidateGender(object source, ServerValidateEventArgs args)

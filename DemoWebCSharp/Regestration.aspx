@@ -174,7 +174,7 @@
 <!-- Submit -->
 <div class="text-center">
 <asp:Button ID="btnSubmit" runat="server"
-    Text="Register"
+    Text="View"
     CssClass="btn btn-primary"
     OnClick="btnSubmit_Click" />
 </div>
