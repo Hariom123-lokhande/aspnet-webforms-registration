@@ -1,0 +1,35 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h3 class="mb-3">Contact Us</h3>
+
+        <p><strong>Name:</strong> Hariom Lokhande</p>
+        <p><strong>Email:</strong> hariomlokhande3456@email.com</p>
+        <p><strong>Phone:</strong> +91 7225952923</p>
+        <p><strong>Location:</strong> Indore, India</p>
+
+        <hr />
+
+        <h5>Send Message</h5>
+
+        @using (Html.BeginForm())
+        {
+            <div class="mb-3">
+                @Html.TextBox("name", null, new { @class = "form-control", placeholder = "Your Name" })
+            </div>
+
+            <div class="mb-3">
+                @Html.TextBox("email", null, new { @class = "form-control", placeholder = "Your Email" })
+            </div>
+
+            <div class="mb-3">
+                @Html.TextArea("message", null, new { @class = "form-control", placeholder = "Your Message", rows = 3 })
+            </div>
+
+            <button type="submit" class="btn btn-primary">Send</button>
+        }
+    </div>
+</div>
