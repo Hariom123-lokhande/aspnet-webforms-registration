@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
+using Serilog;
 namespace MvcTrainingProject.Controllers
 {
     public class AccountController : Controller
@@ -22,7 +22,7 @@ namespace MvcTrainingProject.Controllers
                 Session["User"] = "admin";
                 return RedirectToAction("Register", "Student");
             }
-
+            Log.Warning("invalid login attempt for username: {Username}", username);
             ViewBag.Error = "Invalid Credentials";
             return View();
         }
